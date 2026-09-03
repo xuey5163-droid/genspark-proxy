@@ -1,0 +1,9 @@
+{
+  "name": "genspark-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@genspark/cli": "^1.9.1"
+  }
+}
