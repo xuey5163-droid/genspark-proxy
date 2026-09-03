@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           message: "Hello. Please reply with exactly: Genspark connection successful.",
-          task_type: "chat"
+          task_type: "super_agent"
         })
       }
     );
