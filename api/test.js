@@ -1,43 +1,43 @@
-import { execFile } from "child_process";
-import { promisify } from "util";
-
-const execFileAsync = promisify(execFile);
+import fs from "fs";
+import path from "path";
 
 export default async function handler(req, res) {
   try {
-    // Check that the Genspark API key exists
-    if (!process.env.GSK_API_KEY) {
-      return res.status(500).json({
-        success: false,
-        error: "GSK_API_KEY is not configured in Vercel."
-      });
+    const paths = [
+      "/var/task/node_modules/.bin/gsk",
+      "/var/task/node_modules/@genspark/cli",
+      "/var/task/node_modules/@genspark/cli/package.json"
+    ];
+
+    const result = {};
+
+    for (const p of paths) {
+      result[p] = {
+        exists: fs.existsSync(p),
+        isDirectory: fs.existsSync(p) && fs.statSync(p).isDirectory()
+      };
     }
 
-    // Test the Genspark CLI
-    const { stdout, stderr } = await execFileAsync(
-      "gsk",
-      ["--version"],
-      {
-        env: {
-          ...process.env,
-          GSK_API_KEY: process.env.GSK_API_KEY
-        }
-      }
-    );
+    let packageInfo = null;
+
+    const packagePath = "/var/task/node_modules/@genspark/cli/package.json";
+
+    if (fs.existsSync(packagePath)) {
+      packageInfo = JSON.parse(
+        fs.readFileSync(packagePath, "utf8")
+      );
+    }
 
     return res.status(200).json({
       success: true,
-      message: "Genspark CLI is available.",
-      version: stdout.trim(),
-      stderr: stderr.trim()
+      paths: result,
+      package: packageInfo
     });
 
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error.message,
-      stdout: error.stdout || "",
-      stderr: error.stderr || ""
+      error: error.message
     });
   }
 }
