@@ -9,7 +9,8 @@ export default async function handler(req, res) {
           "X-Api-Key": process.env.GSK_API_KEY
         },
         body: JSON.stringify({
-          prompt: "Hello. Please reply with exactly: Genspark connection successful."
+          message: "Hello. Please reply with exactly: Genspark connection successful.",
+          task_type: "chat"
         })
       }
     );
