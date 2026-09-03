@@ -1,17 +1,15 @@
-import { createRequire } from "module";
+import fs from "fs";
 
 export default async function handler(req, res) {
   try {
-    const require = createRequire(import.meta.url);
+    const file = "/var/task/node_modules/@genspark/cli/dist/index.js";
 
-    const resolved = require.resolve("@genspark/cli");
-
-    const genspark = await import("@genspark/cli");
+    const content = fs.readFileSync(file, "utf8");
 
     return res.status(200).json({
       success: true,
-      resolved_path: resolved,
-      exports: Object.keys(genspark)
+      file_size: content.length,
+      first_3000_chars: content.substring(0, 3000)
     });
 
   } catch (error) {
