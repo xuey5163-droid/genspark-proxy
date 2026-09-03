@@ -1,24 +1,17 @@
-import fs from "fs";
+import { createRequire } from "module";
 
 export default async function handler(req, res) {
   try {
-    const pkg = JSON.parse(
-      fs.readFileSync(
-        "/var/task/node_modules/@genspark/cli/package.json",
-        "utf8"
-      )
-    );
+    const require = createRequire(import.meta.url);
+
+    const resolved = require.resolve("@genspark/cli");
+
+    const genspark = await import("@genspark/cli");
 
     return res.status(200).json({
       success: true,
-      package: {
-        name: pkg.name,
-        version: pkg.version,
-        bin: pkg.bin || null,
-        main: pkg.main || null,
-        module: pkg.module || null,
-        exports: pkg.exports || null
-      }
+      resolved_path: resolved,
+      exports: Object.keys(genspark)
     });
 
   } catch (error) {
