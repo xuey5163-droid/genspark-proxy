@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/test.js": {
+      "includeFiles": [
+        "node_modules/@genspark/cli/**"
+      ]
+    }
+  }
+}
