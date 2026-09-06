@@ -1,27 +1,28 @@
-import { existsSync, readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 
 export default function handler(req, res) {
-  const paths = [
-    "/var/task/node_modules",
-    "/var/task/node_modules/@genspark",
-    "/var/task/node_modules/@genspark/cli",
-    "/var/task/node_modules/@genspark/cli/dist"
-  ];
+  try {
+    const packageJson = JSON.parse(
+      readFileSync(
+        "/var/task/node_modules/@genspark/cli/package.json",
+        "utf8"
+      )
+    );
 
-  const result = {};
+    return res.status(200).json({
+      success: true,
+      name: packageJson.name,
+      version: packageJson.version,
+      type: packageJson.type,
+      main: packageJson.main,
+      bin: packageJson.bin,
+      exports: packageJson.exports
+    });
 
-  for (const path of paths) {
-    try {
-      result[path] = {
-        exists: existsSync(path),
-        files: existsSync(path) ? readdirSync(path) : []
-      };
-    } catch (e) {
-      result[path] = {
-        error: e.message
-      };
-    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
-
-  return res.status(200).json(result);
 }
