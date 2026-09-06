@@ -1,25 +1,24 @@
-import { readFileSync } from "node:fs";
+import { execFile } from "node:child_process";
+
+const cli = "/var/task/node_modules/@genspark/cli/dist/index.js";
 
 export default function handler(req, res) {
-  try {
-    const pkg = JSON.parse(
-      readFileSync(
-        "/var/task/node_modules/@genspark/cli/package.json",
-        "utf8"
-      )
-    );
-
-    return res.status(200).json({
-      name: pkg.name,
-      version: pkg.version,
-      dependencies: pkg.dependencies,
-      optionalDependencies: pkg.optionalDependencies,
-      peerDependencies: pkg.peerDependencies
-    });
-
-  } catch (error) {
-    return res.status(500).json({
-      error: error.message
-    });
-  }
+  execFile(
+    process.execPath,
+    [cli, "--version"],
+    {
+      timeout: 30000
+    },
+    (error, stdout, stderr) => {
+      return res.status(200).json({
+        success: !error,
+        node: process.execPath,
+        cli,
+        error: error ? error.message : null,
+        code: error ? error.code : null,
+        stdout: stdout || "",
+        stderr: stderr || ""
+      });
+    }
+  );
 }
