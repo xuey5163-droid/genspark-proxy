@@ -5,7 +5,7 @@ const cli = "/var/task/node_modules/@genspark/cli/dist/index.js";
 export default function handler(req, res) {
   execFile(
     process.execPath,
-    [cli, "task", "--help"],
+    [cli, "task", "create", "custom_super_agent", "--help"],
     {
       timeout: 30000
     },
