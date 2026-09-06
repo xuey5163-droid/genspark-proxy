@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@genspark/cli": "latest"
+    "@genspark/cli": "1.10.0",
+    "commander": "^12.1.0",
+    "ws": "^8.20.1"
   }
 }
